@@ -23,6 +23,13 @@ def test_parse_reply_fields(reply, user_text, field, expected):
 
 
 # ---------------- 第一輪：請從這裡開始加 ----------------
-
+@pytest.mark.parametrize("reply, user_text, field, expected", [
+    ("【登記】|【雨傘】|圖書館。", "在圖書館撿到雨傘", "action", "登記"),
+    ("認領|未知|未知", "我要認領 3 號", "item_id", 3),
+    ("查詢|耳機|教室", "幫我查教室裡的耳機", "category", "耳機"),
+    ("查詢|耳機|月球", "幫我查月球上的耳機", "location", "未知"),
+])
+def test_round1_ai_parser_cases(reply, user_text, field, expected):
+    assert ai_parser.parse_reply(reply, user_text)[field] == expected
 
 # ---------------- 第二輪：邊界與錯誤情況 ----------------
