@@ -33,3 +33,11 @@ def test_round1_ai_parser_cases(reply, user_text, field, expected):
     assert ai_parser.parse_reply(reply, user_text)[field] == expected
 
 # ---------------- 第二輪：邊界與錯誤情況 ----------------
+# 測試回覆出現兩個類別時是否取最早出現的類別，以及第二輪邊界案例
+@pytest.mark.parametrize("reply, user_text, field, expected", [
+    ("查詢|雨傘水壺|圖書館", "幫我找雨傘或水壺", "category", "雨傘"),
+    ("認領|未知|未知", "我要認領 12 號", "item_id", 12),
+    ("查詢|耳機", "幫我查耳機", "location", "未知"),
+])
+def test_round2_ai_parser_edge_cases(reply, user_text, field, expected):
+    assert ai_parser.parse_reply(reply, user_text)[field] == expected
