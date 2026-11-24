@@ -44,3 +44,20 @@ def test_search_umbrella_count(sample_db):
     assert len(res["data"]["items"]) == 2
 
 # ---------------- 第二輪：邊界與錯誤情況 ----------------
+@pytest.mark.parametrize("desc_len, expected_ok", [
+    (50, True),     # 邊界：剛好 50 字可登記
+    (51, False),    # 邊界：超過 50 字（51 字）失敗
+    (120, False),   # 邊界：遠超 50 字失敗
+])
+def test_report_found_description_length_boundary(db, desc_len, expected_ok):
+    res = service.report_found(db, "水壺", "教室", "藍" * desc_len)
+    assert res["ok"] is expected_ok
+
+
+@pytest.mark.parametrize("claimer", ["", "   ", None])
+def test_claim_invalid_claimer_fails(sample_db, claimer):
+    assert service.claim(sample_db, 1, "王小明")["ok"] is True
+    assert service.claim(sample_db, 2, "王小明")["ok"] is True
+    assert service.claim(sample_db, 3, "王小明")["ok"] is False
+    res = service.claim(sample_db, 1, claimer)
+    assert res["ok"] is False
