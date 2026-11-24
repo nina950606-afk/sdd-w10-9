@@ -18,6 +18,25 @@ def test_get_item_not_found_returns_none(db):
 
 
 # ---------------- 第一輪：請從這裡開始加 ----------------
+def test_get_item_2_is_bottle(sample_db):
+    item = repository.get_item(sample_db, 2)
+    assert item["category"] == "水壺"
+    assert item["location"] == "餐廳"
+    assert item["status"] == "待認領"
+
+
+def test_find_umbrellas(sample_db):
+    ids = [it["id"] for it in repository.find_items(sample_db, category="雨傘")]
+    assert ids == [1, 3]
+
+
+def test_mark_claimed_returns_true(sample_db):
+    assert repository.mark_claimed(sample_db, 1, "王小明") is True
+
+
+def test_mark_claimed_changes_status(sample_db):
+    repository.mark_claimed(sample_db, 1, "王小明")
+    assert repository.get_item(sample_db, 1)["status"] == "已認領"
 
 
 # ---------------- 第二輪：邊界與錯誤情況 ----------------
